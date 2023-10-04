@@ -30,12 +30,12 @@ type Status struct {
 	} `json:"gravity_last_updated"`
 }
 
-func getStatus(c http.Client, apiURL string) (status Status, err error) {
+func getStatus(c http.Client, settings *Settings) (status Status, err error) {
 	var req *http.Request
 
 	var url *url2.URL
 
-	if url, err = url2.Parse(apiURL); err != nil {
+	if url, err = url2.Parse(settings.apiUrl); err != nil {
 		return status, fmt.Errorf(" failed to parse API URL\n %s", parseError(err))
 	}
 
@@ -46,6 +46,7 @@ func getStatus(c http.Client, apiURL string) (status Status, err error) {
 	}
 
 	query.Add("summary", "")
+	query.Add("auth", settings.token)
 
 	url.RawQuery = query.Encode()
 	if req, err = http.NewRequest("GET", url.String(), http.NoBody); err != nil {
